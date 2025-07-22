@@ -10,5 +10,5 @@
 	// 	// code...
 	// }
 
-	var_dump(json_encode($peopleArray[0]));
+	var_dump(json_encode($peopleArray));
 ?>
