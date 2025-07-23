@@ -4,7 +4,7 @@
 		private $model;
 		private $year;
 
-		function __construct($name, $model, $year) {
+		public function __construct($name, $model, $year) {
 
 			$this->name = $name;
 			$this->model = $model;
