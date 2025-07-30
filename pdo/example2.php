@@ -1,8 +1,8 @@
 <?php
-	$server = "127.0.0.1";
-	$database = "users_control";
+	$server = "localhost";
+	$database = "teste";
 	$username = "sa";
-	$password = "@Lu684lcv.";
+	$password = "teste";
 
 	try {
 		$connection = new PDO("sqlsrv:Server=$server;Encrypt=0;TrustServerCertificate=1", $username, $password);
