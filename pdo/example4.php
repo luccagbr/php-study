@@ -22,13 +22,11 @@
 		$stmt->execute();
 
 		$stmt = $connection->prepare("SELECT * FROM users;");
-
+''
  		$stmt->execute();
 
 		$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 		echo json_encode($data);
-
 	} catch(Exception $error) {	
 		echo "Erro ao conectar: " . $error->getMessage() . "<br>";
 	}
