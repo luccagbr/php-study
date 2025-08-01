@@ -18,7 +18,7 @@
  		$stmt->execute();
 
 		$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		echo json_encode($data);
+		echo json_encode($data); 
 	} catch(Exception $error) {
 		echo "<br><br>" . $error->getMessage() . "<br>";
 	}
