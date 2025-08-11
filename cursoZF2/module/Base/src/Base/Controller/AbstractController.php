@@ -78,6 +78,18 @@ abstract class AbstractController extends AbstractActionController {
         $repository = $this->getEm()->getRepository($this->entity)->find($param);
 
         if($repository) {
+            $array = array();
+
+            foreach($repository->toArray() as $key => $value) {
+                if($value instanceof \DateTime) {
+                    $array[$key] = $value->format("d/m/Y");
+                } else {
+                    $arrat[$key] = $value;
+                }
+            }
+
+            $form->setData($array);
+
             if($request->isPost()) {
                 $form->setData($request->getPost());
     
@@ -123,7 +135,17 @@ abstract class AbstractController extends AbstractActionController {
     }
 
     public function removeAction() {
+        $service = $this->getServiceLocator()->get($this->service);
+        $id = (int) $this->params()->fromRoute("id", 0);
 
+
+        if($service->remove(array("id" => $id))) {
+            $this->flashMessenger()->addSuccessMessage("Registro deletado com sucesso!");
+        } else {
+            $this->flashMessenger()->addErrorMessage("Não foi possível remover o registro!");
+        }
+
+        return $this->redirect()->toRoute($this->route, array("controller" => $this->controller));
     }
 
     public function getEm() {
