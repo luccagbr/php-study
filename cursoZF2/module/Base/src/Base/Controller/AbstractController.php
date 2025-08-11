@@ -45,7 +45,7 @@ abstract class AbstractController extends AbstractActionController {
                 if($service->save($request->getPost()->toArray())) {
                     $this->flashMessenger()->addSuccessMessage("Cadastrado com sucesso!");
                 } else {
-                    $this->flashMessenger()->addErrorMessage("Não foi possível cadastrar. Tente novamente!");
+                    $this->flashMessenger()->addErrorMessage("Não foi possível cadastrar! Tente novamente.");
                 }
 
                 return $this->redirect()->toRoute($this->route, array("controller" => $this->controller));
@@ -60,10 +60,66 @@ abstract class AbstractController extends AbstractActionController {
             return new ViewModel(array("form" => $form, "error" => $this->flashMessenger()->getErrorMessages()));
         }
 
+        $this->flashMessenger()->clearMessages();
+
         return new ViewModel(array('form' => $form));
     }
 
     public function updateAction() {
+        if(is_string($this->form)) {
+            $form = new $this->form;
+        } else {
+            $form = $this->form;
+        }
+
+        $request = $this->getRequest();
+        $param = $this->params()->fromRoute("id", 0);
+        
+        $repository = $this->getEm()->getRepository($this->entity)->find($param);
+
+        if($repository) {
+            if($request->isPost()) {
+                $form->setData($request->getPost());
+    
+                if($form->isValid()) {
+                    $service = $this->getServiceLocator()->get($this->service);
+
+                    $data = $request->getPost()->toArray();
+                    $data["id"] = (int) $param;
+
+                    if($service->save($data)) {
+                        $this->flashMessenger()->addSuccessMessage("Atualizado com sucesso!");
+                    } else {
+                        $this->flashMessenger()->addErrorMessage("Não foi possível atualizar! Tente mais tarde.");
+                    }
+
+                    return $this->redirect()->toRoute($this->route, array("controller", $this->controller));
+                }
+            }
+        } else {
+            $this->flashMessenger()->addInfoMessage("Registro não encontrado!");
+            return $this->redirect()->toRoute($this->route, array("controller" => $this->controller));
+        }
+
+
+        if($this->flashMessenger()->hasSuccessMessages()) {
+            return new ViewModel(array(
+                "form", $form, 
+                "success" => $this->flashMessenger()->getSuccessMessages(), 
+                "id" => $param));
+        } 
+
+        if($this->flashMessenger()->hasInfoMessages()){
+            return new ViewModel(array(
+                "form" => $form, 
+                "warning" => $this->flashMessenger()->getInfoMessages(), 
+                "id" => $param));
+        }
+
+        $this->flashMessenger()->clearMessages();
+
+        return new ViewModel(array('form' => $form, "id" => $param));
+
     }
 
     public function removeAction() {
